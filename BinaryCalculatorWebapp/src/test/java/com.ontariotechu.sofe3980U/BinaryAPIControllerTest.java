@@ -48,4 +48,63 @@ public class BinaryAPIControllerTest {
 			.andExpect(MockMvcResultMatchers.jsonPath("$.result").value(10001))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.operator").value("add"));
     }
+    	@Test
+    public void addZeroValues() throws Exception {
+        this.mvc.perform(get("/add").param("operand1","0").param("operand2","0"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("0"));
+    }
+
+	@Test
+    public void addCarryValue() throws Exception {
+        this.mvc.perform(get("/add").param("operand1","1111").param("operand2","1"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("10000"));
+    }
+
+	@Test
+    public void addDifferentLengths() throws Exception {
+        this.mvc.perform(get("/add_json").param("operand1","101").param("operand2","1010"))
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.operand1").value(101))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.operand2").value(1010))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.result").value(1111))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.operator").value("add"));
+    }
+
+    	@Test
+	public void multiply() throws Exception {
+		this.mvc.perform(get("/multiply_json")
+				.param("operand1", "111")
+				.param("operand2", "1010"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.operand1").value(111))
+			.andExpect(jsonPath("$.operand2").value(1010))
+			.andExpect(jsonPath("$.result").value(1000110))
+			.andExpect(jsonPath("$.operator").value("multiply"));
+	}
+
+	@Test
+	public void and() throws Exception {
+		this.mvc.perform(get("/and_json")
+				.param("operand1", "111")
+				.param("operand2", "1010"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.operand1").value(111))
+			.andExpect(jsonPath("$.operand2").value(1010))
+			.andExpect(jsonPath("$.result").value(10))
+			.andExpect(jsonPath("$.operator").value("and"));
+	}
+
+	@Test
+	public void or() throws Exception {
+		this.mvc.perform(get("/or_json")
+				.param("operand1", "111")
+				.param("operand2", "1010"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.operand1").value(111))
+			.andExpect(jsonPath("$.operand2").value(1010))
+			.andExpect(jsonPath("$.result").value(1111))
+			.andExpect(jsonPath("$.operator").value("or"));
+	}
 }

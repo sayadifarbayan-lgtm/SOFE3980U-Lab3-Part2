@@ -56,5 +56,57 @@ public class BinaryControllerTest {
 			.andExpect(model().attribute("result", "1110"))
 			.andExpect(model().attribute("operand1", "111"));
     }
+    	@Test
+	public void postZeroValues() throws Exception {
+        this.mvc.perform(post("/").param("operand1","0").param("operator","+").param("operand2","0"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "0"))
+			.andExpect(model().attribute("operand1", "0"));
+    }
 
+	@Test
+	public void postCarryValue() throws Exception {
+        this.mvc.perform(post("/").param("operand1","1111").param("operator","+").param("operand2","1"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "10000"))
+			.andExpect(model().attribute("operand1", "1111"));
+    }
+
+	@Test
+	public void postDifferentLengths() throws Exception {
+        this.mvc.perform(post("/").param("operand1","101").param("operator","+").param("operand2","1010"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1111"))
+			.andExpect(model().attribute("operand1", "101"));
+    }
+
+    	@Test
+	public void postMultiply() throws Exception {
+        this.mvc.perform(post("/").param("operand1","111").param("operator","*").param("operand2","1010"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1000110"))
+			.andExpect(model().attribute("operator", "*"));
+    }
+
+	@Test
+	public void postAnd() throws Exception {
+        this.mvc.perform(post("/").param("operand1","111").param("operator","&").param("operand2","1010"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "10"))
+			.andExpect(model().attribute("operator", "&"));
+    }
+
+	@Test
+	public void postOr() throws Exception {
+        this.mvc.perform(post("/").param("operand1","111").param("operator","|").param("operand2","1010"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1111"))
+			.andExpect(model().attribute("operator", "|"));
+    }
 }
